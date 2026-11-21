@@ -4,15 +4,15 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = employeeManager.o
-LINKOBJ  = employeeManager.o
+OBJ      = employeeManager.o menu.o
+LINKOBJ  = employeeManager.o menu.o
 LIBS     = -L"E:/AppDatas/Dev-Cpp/TDM-GCC-64/lib" -L"E:/AppDatas/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/include" -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include"
 CXXINCS  = -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/include" -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include" -I"E:/AppDatas/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include/c++"
 BIN      = Nhom1.exe
 CXXFLAGS = $(CXXINCS) -g3
 CFLAGS   = $(INCS) -g3
-DEL      = E:\AppDatas\Dev-Cpp\devcpp.exe INTERNAL_DEL
+DEL      = E:\AppDatas\Dev-Cpp\DevCpp.exe INTERNAL_DEL
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -26,3 +26,6 @@ $(BIN): $(OBJ)
 
 employeeManager.o: employeeManager.cpp
 	$(CPP) -c employeeManager.cpp -o employeeManager.o $(CXXFLAGS)
+
+menu.o: menu.cpp
+	$(CPP) -c menu.cpp -o menu.o $(CXXFLAGS)
