@@ -34,6 +34,12 @@ int main() {
     EmployeeList employeeList(departmentList);
 
     try {
+        departmentList.loadFromFile("department.txt");
+    } catch (const std::exception& error) {
+        std::cout << "Error loading department.txt: " << error.what() << '\n';
+    }
+
+    try {
         while (true) {
             const int selectedIndex = getMenuChoice(options);
             // std::cout << "Selected option index: " << selectedIndex << '\n';
@@ -68,6 +74,7 @@ int main() {
 
                 case 6:
                     // Option 6: save departments to department.txt.
+                    departmentList.saveToFile("department.txt");
                     break;
 
                 case 7:
