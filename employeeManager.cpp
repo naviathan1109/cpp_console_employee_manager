@@ -54,9 +54,15 @@ int main() {
                     departmentList.addDepartment();
                     break;
 
-                case 3:
-                    // Option 3: search for a department by ID.
+                case 3: {
+                    std::string id = readRequired("Enter department ID: ");
+                    int index = departmentList.searchID(id);
+                    if (index >= 0)
+                        std::cout << departmentList.getDepartment(index).toString() << '\n';
+                    else
+                        std::cout << "Department not found.\n";
                     break;
+                }
 
                 case 4:
                     // Option 4: update a department.
@@ -90,6 +96,7 @@ int main() {
 
                 case 11:
                     // Option 11: remove an employee.
+                    employeeList.removeEmployee();
                     break;
 
                 case 12:
