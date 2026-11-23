@@ -191,3 +191,51 @@ bool EmployeeList::updateEmployee() {
     std::cout << "Employee updated.\n";
     return true;
 }
+
+/**
+ * @brief Removes an employee from the employee list.
+ *
+ * Prompts the user to enter an employee ID, searches for the corresponding
+ * employee, displays the employee's information, and requests confirmation
+ * before removing the employee from the list.
+ *
+ * @return true if the employee is successfully removed; otherwise, false.
+ *
+ * @author Vu Tran Tuan
+ * @date 2026-11-23 20:41 (GMT+07:00)
+ */
+// Removes the requested employee only after showing the record and confirmation.
+bool EmployeeList::removeEmployee() {
+    std::string id = readRequired("Enter the employee ID to remove: ");
+    int index = searchID(id);
+    if (index < 0) {
+        std::cout << "Employee not found.\n";
+        return false;
+    }
+
+    std::cout << "Employee to remove:\n" << itemArr[index].toString() << '\n';
+    if (!confirm("Confirm employee removal?")) return false;
+    itemArr.erase(itemArr.begin() + index);
+    hasChangeNotUpdated = true;
+    std::cout << "Employee removed.\n";
+    return true;
+}
+
+/**
+ * @brief Searches for an employee by employee ID.
+ *
+ * Iterates through the employee list and compares each employee's ID
+ * with the requested ID.
+ *
+ * @param id The employee ID to search for.
+ * @return The index of the employee if found; otherwise, returns -1.
+ *
+ * @author Vu Tran Tuan
+ * @date 2026-11-23 20:48 (GMT+07:00)
+ */
+// Returns the index of the employee with the requested ID, or -1.
+int EmployeeList::searchID(const std::string& id) {
+    for (size_t i = 0; i < itemArr.size(); ++i)
+        if (itemArr[i].getEmployeeID() == id) return static_cast<int>(i);
+    return -1;
+}
