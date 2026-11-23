@@ -1,3 +1,5 @@
+#include "departmentList.h"
+#include "employeeList.h"
 #include "menu.h"
 
 #include <exception>
@@ -27,6 +29,10 @@ int main() {
         "Save employees to employee.txt"
     };
 
+    // Khoi tao doi tuong quan ly danh sach phong ban va danh sach nhan vien (author: anhnq)
+    DepartmentList departmentList;
+    EmployeeList employeeList(departmentList);
+
     try {
         while (true) {
             const int selectedIndex = getMenuChoice(options);
@@ -39,11 +45,13 @@ int main() {
                     break;
 
                 case 1:
-                    // Option 1: list all departments.
+                    // Option 1: hien thi toan bo danh sach phong ban (author: anhnq)
+                    departmentList.listDepartments();
                     break;
 
                 case 2:
-                    // Option 2: add a department.
+                    // Option 2: them moi mot phong ban (author: anhnq)
+                    departmentList.addDepartment();
                     break;
 
                 case 3:
@@ -71,11 +79,13 @@ int main() {
                     break;
 
                 case 9:
-                    // Option 9: add an employee.
+                    // Option 9: them moi mot nhan vien (author: anhnq)
+                    employeeList.addEmployee();
                     break;
 
                 case 10:
-                    // Option 10: update an employee.
+                    // Option 10: cap nhat thong tin nhan vien theo ID (author: anhnq)
+                    employeeList.updateEmployee();
                     break;
 
                 case 11:
