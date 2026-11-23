@@ -1,3 +1,12 @@
+ /*
+Ho va ten: Doan Tuan Anh
+Ma sinh vien: K26DTCN001
+Date: 17/11/2026
+- Tạo class departmentList.cpp
+- Triển khai hàm loadFromFile và saveToFile trong departmentList.cpp
+- Bổ sung code gọi đến hàm loadFromFile và saveToFile ở main() trong employeeManager.cpp
+*/
+
 #include "departmentList.h"
 
 #include <iostream>
@@ -15,11 +24,7 @@ std::string trim(const std::string& value) {
     return value.substr(start, end - start + 1);
 }
 
-/*
-   author: anhnq
-   date: 23/11/2026
-   description: Nhap chuoi bat buoc tu ban phim, khong cho phep bo trong
-*/
+
 std::string readRequired(const std::string& label) {
     std::string value;
     do {
