@@ -24,7 +24,11 @@ std::string trim(const std::string& value) {
     return value.substr(start, end - start + 1);
 }
 
-
+/*
+   author: anhnq
+   date: 23/11/2026
+   description: Nhap chuoi bat buoc tu ban phim, khong cho phep bo trong
+*/
 std::string readRequired(const std::string& label) {
     std::string value;
     do {
@@ -38,6 +42,8 @@ std::string readRequired(const std::string& label) {
 }
 
 /*
+   author: anhnq
+   date: 23/11/2026
    description: Nhap so thuc khong am (>= 0) va kiem tra tinh hop le
 */
 double readPositiveDouble(const std::string& label) {
@@ -53,8 +59,9 @@ double readPositiveDouble(const std::string& label) {
     } while (true);
 }
 
-} // namespace
+} 
 
+// namespace
 DepartmentList::DepartmentList() = default;
 
 bool DepartmentList::loadFromFile(const std::string&) {
@@ -74,6 +81,8 @@ Department DepartmentList::getUserChoice() {
 }
 
 /*
+   author: anhnq
+   date: 23/11/2026
    description: Them moi mot phong ban vao danh sach sau khi kiem tra trung ID
 */
 void DepartmentList::addDepartment() {
@@ -96,6 +105,8 @@ void DepartmentList::addDepartment() {
 }
 
 /*
+   author: anhnq
+   date: 23/11/2026
    description: Hien thi toan bo danh sach phong ban ra man hinh
 */
 void DepartmentList::listDepartments() const {
@@ -110,7 +121,11 @@ void DepartmentList::listDepartments() const {
         std::cout << department.toString() << '\n';
 }
 
-// Loads pipe-delimited departments, validating their fields and unique IDs.
+/*
+   author: anhdt
+   date: 23/11/2026
+   description: Loads pipe-delimited departments, validating their fields and unique IDs.
+*/
 bool DepartmentList::loadFromFile(const std::string& filename) {
     std::ifstream input(filename);
     if (!input) throw std::runtime_error("Could not open department file: " + filename);
@@ -136,7 +151,11 @@ bool DepartmentList::loadFromFile(const std::string& filename) {
     return true;
 }
 
-// Saves all departments and marks the list clean only after a successful write.
+/*
+   author: anhdt
+   date: 23/11/2026
+   description: Saves all departments and marks the list clean only after a successful write.
+*/
 bool DepartmentList::saveToFile(const std::string& filename) {
     std::ofstream output(filename);
     if (!output) return false;

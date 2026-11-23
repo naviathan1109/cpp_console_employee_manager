@@ -27,3 +27,4 @@
 *.userosscache
 *.sln.docstates
 *.layout
+docs/*
