@@ -25,6 +25,7 @@ public:
     bool loadFromFile(const std::string& filename) override;
     bool saveToFile(const std::string& filename) override;
     int searchID(const std::string& id) override;
+    bool removeEmployee();
 
     // --- Phan nhiem vu cua Nguyen Quang Anh (anhnq) ---
     // Nhap thong tin, kiem tra ngan sach phong ban va them moi nhan vien
