@@ -61,6 +61,7 @@ int main() {
                     break;
 
                 case 3: {
+                    // Option 3: search department by ID (author: K26DTCN078_nvan)
                     std::string id = readRequired("Enter department ID: ");
                     int index = departmentList.searchID(id);
                     if (index >= 0)
@@ -70,8 +71,9 @@ int main() {
                     break;
                 }
 
-                case 4:
-                    // Option 4: update a department.
+                case 4: 
+					// Option 4: update a department (author: K26DTCN078_nvan)
+                    departmentList.updateDepartment(employeeList); 
                     break;
 
                 case 5:

@@ -72,8 +72,45 @@ bool DepartmentList::saveToFile(const std::string&) {
     return false;
 }
 
-int DepartmentList::searchID(const std::string&) {
+/*
+   author: K26DTCN078_nvan
+   date: 24/11/2026
+   description: Trả về chỉ mục của phòng ban có ID được yêu cầu hoặc -1.
+*/
+int DepartmentList::searchID(const std::string& id) {
+    for (size_t i = 0; i < itemArr.size(); ++i)
+        if (itemArr[i].getDepartmentID() == id) return static_cast<int>(i);
     return -1;
+}
+
+
+/*
+   author: K26DTCN078_nvan
+   date: 24/11/2026
+   description: Hiển thị các giá trị cũ và được đề xuất, sau đó áp dụng chỉnh sửa sau khi xác nhận.
+*/
+void DepartmentList::updateDepartment(EmployeeList& employeeList) {
+    std::string id = readRequired("Enter the department ID to update: ");
+    int index = searchID(id);
+    if (index < 0) {
+        std::cout << "Department not found.\n";
+        return;
+    }
+
+    Department before = itemArr[index];
+    std::string name = readRequired("New department name: ");
+    std::string location = readRequired("New location: ");
+    double budget = readPositiveDouble("New budget: ");
+
+    Department after(id, name, location, budget);
+    std::cout << "\nBefore: " << before.toString()
+              << "\nAfter:  " << after.toString() << "\n";
+    if (!confirm("Confirm department update?")) return;
+
+    itemArr[index] = after;
+    employeeList.synchronizeDepartment(after);
+    hasChangeNotUpdated = true;
+    std::cout << "Department updated.\n";
 }
 
 Department DepartmentList::getUserChoice() {
