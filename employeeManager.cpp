@@ -86,11 +86,13 @@ int main() {
                     break;
 
                 case 7:
-                    // Option 7: list all employees.
+                    // Option 7: liệt kê tất cả nhân viên. (author: K26DTCN078_nvan)
+                    employeeList.listEmployees();
                     break;
 
                 case 8:
-                    // Option 8: search employees by department name.
+                    // Option 8: tìm kiếm nhân viên theo tên bộ phận. (author: K26DTCN078_nvan)
+                    employeeList.printBasedDepartmentName()
                     break;
 
                 case 9:
