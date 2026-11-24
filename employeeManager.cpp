@@ -92,7 +92,7 @@ int main() {
 
                 case 8:
                     // Option 8: tìm kiếm nhân viên theo tên bộ phận. (author: K26DTCN078_nvan)
-                    employeeList.printBasedDepartmentName()
+                    employeeList.printBasedDepartmentName();
                     break;
 
                 case 9:
