@@ -239,3 +239,37 @@ int EmployeeList::searchID(const std::string& id) {
         if (itemArr[i].getEmployeeID() == id) return static_cast<int>(i);
     return -1;
 }
+
+/*
+   author: K26DTCN078_nvan
+   date: 26/11/2026
+   description: In nhân viên theo thứ tự ID nhân viên tăng dần.
+*/
+void EmployeeList::listEmployees() const {
+    if (itemArr.empty()) {
+        std::cout << "There are no employees.\n";
+        return;
+    }
+    std::vector<Employee> sorted = itemArr;
+    std::sort(sorted.begin(), sorted.end());
+    for (const Employee& employee : sorted)
+        std::cout << employee.toString() << '\n';
+}
+
+/*
+   author: K26DTCN078_nvan
+   date: 26/11/2026
+   description: Tìm và in nhân viên có tên bộ phận khớp chính xác với dữ liệu đầu vào.
+*/
+void EmployeeList::printBasedDepartmentName() {
+    std::string name = toLower(readRequired("Enter department name: "));
+    bool found = false;
+    for (const Employee& employee : itemArr) {
+        Department department = employee.getDepartment();
+        if (toLower(department.getDepartmentName()) == name) {
+            std::cout << employee.toString() << '\n';
+            found = true;
+        }
+    }
+    if (!found) std::cout << "No employees found for that department.\n";
+}
