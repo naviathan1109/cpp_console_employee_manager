@@ -1,0 +1,30 @@
+# Build directories
+/build/
+/cmake-build-*/
+/Debug/
+/Release/
+/x64/
+/x86/
+
+# Compiled artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.pdb
+*.ilk
+*.pch
+
+# Visual Studio
+/.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.layout
+docs/*
