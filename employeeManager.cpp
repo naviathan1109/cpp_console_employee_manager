@@ -8,6 +8,7 @@
 #include <vector>
 
 /*
+<<<<<<< HEAD
    author: hoangductuyen
    date: 25/11/2026
    description: loadFromFile
@@ -29,6 +30,8 @@ void EmployeeManager::run() {
         std::cout << "Error loading employee.txt: " << error.what() << '\n';
     }
 /*
+=======
+>>>>>>> 54d73e148bee0e43685ddc487187e58af032015c
    author: anhnh
    date: 19/11/2026
    description: Khoi tao danh sach chuc nang va chay vong lap xu ly lua chon
@@ -97,12 +100,19 @@ int main() {
                     departmentList.updateDepartment(employeeList); 
                     break;
 
+<<<<<<< HEAD
                 case 5: {
                 std::string id = readRequired("Enter the department ID to remove: ");
                 departmentList.removeDepartment(id, employeeList);
                 break;
             }
             
+=======
+                case 5:
+                    // Option 5: remove a department.
+                    break;
+
+>>>>>>> 54d73e148bee0e43685ddc487187e58af032015c
                 case 6:
                     // Option 6: save departments to department.txt.
                     departmentList.saveToFile("department.txt");
