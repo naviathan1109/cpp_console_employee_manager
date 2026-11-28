@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+class EmployeeList;
+
 /*
    author: anhnq
    date: 23/11/2026
@@ -23,7 +25,10 @@ public:
 
     // Can khai bao vi EmployeeList::addEmployee() va updateEmployee() goi den ham nay
     Department getUserChoice();
-    bool removeDepartment();
+    Department getDepartment(int index) const;
+    void updateDepartment(EmployeeList& employeeList);
+    bool removeDepartment(EmployeeList& employeeList);
+    bool removeDepartment(const std::string& id, EmployeeList& employeeList);
 
     // --- Phan nhiem vu cua Nguyen Quang Anh (anhnq) ---
     // Nhap thong tin va them moi mot phong ban (kiem tra trung ma phong ban)

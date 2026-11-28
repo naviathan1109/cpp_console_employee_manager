@@ -4,6 +4,7 @@
 #include "employee.h"
 #include "entityList.h"
 
+#include <cstddef>
 #include <string>
 
 /*
@@ -26,6 +27,10 @@ public:
     bool saveToFile(const std::string& filename) override;
     int searchID(const std::string& id) override;
     bool removeEmployee();
+    std::size_t countByDepartment(const std::string& departmentID) const;
+    void moveDepartment(const std::string& fromID, const Department& target);
+    void removeByDepartment(const std::string& departmentID);
+    void synchronizeDepartment(const Department& updatedDepartment);
 
     // --- Phan nhiem vu cua Nguyen Quang Anh (anhnq) ---
     // Nhap thong tin, kiem tra ngan sach phong ban va them moi nhan vien
@@ -33,4 +38,6 @@ public:
 
     // Cap nhat thong tin nhan vien theo ID, hien thi so sanh truoc/sau va xac nhan
     bool updateEmployee();
+    void listEmployees() const;
+    void printBasedDepartmentName();
 };

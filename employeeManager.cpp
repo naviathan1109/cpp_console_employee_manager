@@ -69,7 +69,9 @@ int main() {
 
                 case 3: {
                     // Option 3: search department by ID (author: K26DTCN078_nvan)
-                    std::string id = readRequired("Enter department ID: ");
+                    std::string id;
+                    std::cout << "Enter department ID: ";
+                    std::getline(std::cin, id);
                     int index = departmentList.searchID(id);
                     if (index >= 0)
                         std::cout << departmentList.getDepartment(index).toString() << '\n';
@@ -85,7 +87,7 @@ int main() {
 
                 case 5:
                     // Option 5: remove a department.
-                    departmentList.removeDepartment();
+                    departmentList.removeDepartment(employeeList);
                     break;
 
                 case 6:
@@ -123,6 +125,10 @@ int main() {
 
                 case 12:
                     // Option 12: save employees to employee.txt.
+                    if (employeeList.saveToFile("employee.txt"))
+                        std::cout << "Saved employee.txt.\n";
+                    else
+                        std::cout << "Could not save employee.txt.\n";
                     break;
             }
         }

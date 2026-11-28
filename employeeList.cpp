@@ -1,7 +1,13 @@
 #include "employeeList.h"
 
+#include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -10,6 +16,24 @@ double salaryByDepartment(const std::vector<Employee>& employees,
 
 namespace {
 
+std::string toLower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(),
+                   [](unsigned char character) {
+                       return static_cast<char>(std::tolower(character));
+                   });
+    return value;
+}
+
+void printEmployeeHeader() {
+    std::cout << std::left
+              << std::setw(8) << "Emp ID" << " | "
+              << std::setw(30) << "Full Name" << " | "
+              << std::setw(8) << "Dept ID" << " | "
+              << std::setw(30) << "Department Name" << " | "
+              << std::setw(25) << "Position" << " | "
+              << std::right << std::setw(15) << "Salary" << '\n';
+}
+
 std::string trim(const std::string& value) {
     const std::string whitespace = " \t\r\n";
     size_t start = value.find_first_not_of(whitespace);
@@ -17,6 +41,20 @@ std::string trim(const std::string& value) {
     if (start == std::string::npos) return "";
     size_t end = value.find_last_not_of(whitespace);
     return value.substr(start, end - start + 1);
+}
+
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Tach dong du lieu theo ky tu phan cach va loai bo khoang trang hai dau
+*/
+std::vector<std::string> split(const std::string& line, char delimiter) {
+    std::vector<std::string> fields;
+    std::stringstream input(line);
+    std::string field;
+    while (std::getline(input, field, delimiter))
+        fields.push_back(trim(field));
+    return fields;
 }
 
 /*
@@ -75,21 +113,93 @@ bool confirm(const std::string& message) {
 EmployeeList::EmployeeList(DepartmentList& departmentList)
     : departmentList(departmentList) {}
 
-bool EmployeeList::loadFromFile(const std::string&) {
-    return false;
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Doc danh sach nhan vien tu tep, kiem tra du lieu va lien ket phong ban theo ma
+*/
+bool EmployeeList::loadFromFile(const std::string& filename) {
+    std::ifstream input(filename);
+    if (!input)
+        throw std::runtime_error("Could not open employee file: " + filename);
+
+    std::vector<Employee> loadedEmployees;
+    std::string line;
+    std::size_t lineNumber = 0;
+    while (std::getline(input, line)) {
+        ++lineNumber;
+        if (trim(line).empty()) continue;
+
+        const std::vector<std::string> fields = split(line, '|');
+        if (fields.size() != 5)
+            throw std::runtime_error(
+                "Invalid record format in employee file at line " +
+                std::to_string(lineNumber) + ".");
+        if (fields[0].empty() || fields[1].empty() || fields[2].empty() ||
+            fields[3].empty()) {
+            throw std::runtime_error(
+                "Employee fields cannot be empty at line " +
+                std::to_string(lineNumber) + ".");
+        }
+
+        double salary = 0.0;
+        std::stringstream parser(fields[4]);
+        if (!(parser >> salary) || !parser.eof() || !std::isfinite(salary) ||
+            salary < 0.0) {
+            throw std::runtime_error(
+                "Invalid employee salary at line " +
+                std::to_string(lineNumber) + ".");
+        }
+
+        const int departmentIndex = departmentList.searchID(fields[3]);
+        if (departmentIndex < 0)
+            throw std::runtime_error("Unknown department ID at line " +
+                                     std::to_string(lineNumber) + ": " +
+                                     fields[3]);
+
+        const bool duplicateID =
+            std::find_if(loadedEmployees.begin(), loadedEmployees.end(),
+                         [&fields](const Employee& employee) {
+                             return employee.getEmployeeID() == fields[0];
+                         }) != loadedEmployees.end();
+        if (duplicateID)
+            throw std::runtime_error("Duplicate employee ID: " + fields[0]);
+
+        loadedEmployees.emplace_back(
+            fields[0], departmentList.getDepartment(departmentIndex),
+            fields[1], fields[2], salary);
+    }
+
+    if (input.bad())
+        throw std::runtime_error("Error while reading employee file: " + filename);
+
+    itemArr.swap(loadedEmployees);
+    hasLoadFromFile = true;
+    hasChangeNotUpdated = false;
+    return true;
 }
 
-bool EmployeeList::saveToFile(const std::string&) {
-    return false;
-}
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Ghi danh sach nhan vien theo dinh dang tep va xoa co thay doi sau khi ghi thanh cong
+*/
+bool EmployeeList::saveToFile(const std::string& filename) {
+    std::ofstream output(filename);
+    if (!output) return false;
 
-int EmployeeList::searchID(const std::string&) {
-    return -1;
-}
+    for (const Employee& employee : itemArr) {
+        output << employee.getEmployeeID() << '|'
+               << employee.getFullName() << '|'
+               << employee.getPosition() << '|'
+               << employee.getDepartment().getDepartmentID() << '|'
+               << std::fixed << std::setprecision(2) << employee.getSalary()
+               << '\n';
+    }
 
-double salaryByDepartment(const std::vector<Employee>&,
-                          const std::string&) {
-    return 0.0;
+    if (!output) return false;
+    hasChangeNotUpdated = false;
+    return true;
 }
 
 /*
@@ -241,6 +351,37 @@ int EmployeeList::searchID(const std::string& id) {
 }
 
 /*
+   author: anhnh
+   date: 28/11/2026
+   description: Dem so nhan vien dang duoc gan cho ma phong ban
+*/
+std::size_t EmployeeList::countByDepartment(
+    const std::string& departmentID) const {
+    std::size_t count = 0;
+    for (const Employee& employee : itemArr)
+        if (employee.getDepartment().getDepartmentID() == departmentID)
+            ++count;
+    return count;
+}
+
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Cap nhat thong tin phong ban luu trong cac nhan vien thuoc phong ban do
+*/
+void EmployeeList::synchronizeDepartment(const Department& updatedDepartment) {
+    bool changed = false;
+    for (Employee& employee : itemArr) {
+        if (employee.getDepartment().getDepartmentID()
+            == updatedDepartment.getDepartmentID()) {
+            employee.setDepartment(updatedDepartment);
+            changed = true;
+        }
+    }
+    if (changed) hasChangeNotUpdated = true;
+}
+
+/*
    author: K26DTCN078_nvan
    date: 26/11/2026
    description: In nhân viên theo thứ tự ID nhân viên tăng dần.
@@ -252,6 +393,7 @@ void EmployeeList::listEmployees() const {
     }
     std::vector<Employee> sorted = itemArr;
     std::sort(sorted.begin(), sorted.end());
+    printEmployeeHeader();
     for (const Employee& employee : sorted)
         std::cout << employee.toString() << '\n';
 }
@@ -267,6 +409,7 @@ void EmployeeList::printBasedDepartmentName() {
     for (const Employee& employee : itemArr) {
         Department department = employee.getDepartment();
         if (toLower(department.getDepartmentName()) == name) {
+            if (!found) printEmployeeHeader();
             std::cout << employee.toString() << '\n';
             found = true;
         }
