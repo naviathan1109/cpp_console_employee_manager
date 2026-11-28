@@ -199,6 +199,8 @@ bool DepartmentList::removeDepartment(const std::string& id,
         return false;
     }
 
+    int employeeAction = 0;
+    Department targetDepartment;
     const std::size_t employeeCount = employeeList.countByDepartment(id);
     if (employeeCount > 0) {
         std::cout << "This department has " << employeeCount << " employee(s).\n"
@@ -225,14 +227,19 @@ bool DepartmentList::removeDepartment(const std::string& id,
                 std::cout << "A different target department is required.\n";
                 return false;
             }
-            employeeList.moveDepartment(id, target);
+            targetDepartment = target;
+            employeeAction = 1;
         } else {
-            employeeList.removeByDepartment(id);
+            employeeAction = 2;
         }
     }
 
     if (!confirm("Confirm final deletion of department " + id + "?"))
         return false;
+    if (employeeAction == 1)
+        employeeList.moveDepartment(id, targetDepartment);
+    else if (employeeAction == 2)
+        employeeList.removeByDepartment(id);
     itemArr.erase(itemArr.begin() + index);
     hasChangeNotUpdated = true;
     std::cout << "Department removed.\n";

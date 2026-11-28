@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DEPARTMENT_LIST_H
+#define DEPARTMENT_LIST_H
 
 #include "department.h"
 #include "entityList.h"
@@ -37,3 +38,5 @@ public:
     // Hien thi toan bo danh sach phong ban hien co
     void listDepartments() const;
 };
+
+#endif
