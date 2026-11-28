@@ -23,6 +23,7 @@ public:
 
     // Can khai bao vi EmployeeList::addEmployee() va updateEmployee() goi den ham nay
     Department getUserChoice();
+    bool removeDepartment();
 
     // --- Phan nhiem vu cua Nguyen Quang Anh (anhnq) ---
     // Nhap thong tin va them moi mot phong ban (kiem tra trung ma phong ban)
