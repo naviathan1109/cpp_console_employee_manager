@@ -19,6 +19,7 @@
 *.pdb
 *.ilk
 *.pch
+*.gch
 
 # Visual Studio
 /.vs/
