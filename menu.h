@@ -9,4 +9,4 @@
    description: Khai bao cac ham hien thi menu va xac nhan thoat chuong trinh
 */
 int getMenuChoice(const std::vector<std::string>& options);
-bool confirmExit();
+bool confirmExit(const std::string& unsavedFiles = "");

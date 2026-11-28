@@ -40,10 +40,18 @@ int getMenuChoice(const std::vector<std::string>& options) {
    date: 19/11/2026
    description: Yeu cau nguoi dung xac nhan co muon thoat chuong trinh hay khong
 */
-bool confirmExit() {
+bool confirmExit(const std::string& unsavedFiles) {
+    const bool hasUnsavedChanges = !unsavedFiles.empty();
+    if (hasUnsavedChanges)
+        std::cout << "Unsaved changes in " << unsavedFiles
+                  << " will be lost.\n";
+
+    const std::string prompt = hasUnsavedChanges
+        ? "Exit without saving? (y/n): "
+        : "Do you want to exit the program? (y/n): ";
     std::string answer;
     while (true) {
-        std::cout << "Do you want to exit the program? (y/n): ";
+        std::cout << prompt;
         if (!std::getline(std::cin, answer))
             throw std::runtime_error("Input ended while waiting for exit confirmation.");
 

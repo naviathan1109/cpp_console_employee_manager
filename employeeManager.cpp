@@ -53,8 +53,17 @@ int main() {
 
             switch (selectedIndex) {
                 case 0:
-                    // Option 0: confirm whether to exit the program.
-                    if (confirmExit()) return 0;
+                    // Option 0: warn about unsaved changes before confirming exit.
+                    {
+                        std::string unsavedFiles;
+                        if (departmentList.hasUnsavedChanges())
+                            unsavedFiles = "department.txt";
+                        if (employeeList.hasUnsavedChanges())
+                            unsavedFiles += unsavedFiles.empty()
+                                ? "employee.txt"
+                                : " and employee.txt";
+                        if (confirmExit(unsavedFiles)) return 0;
+                    }
                     break;
 
                 case 1:
