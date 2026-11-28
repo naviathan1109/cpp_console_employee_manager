@@ -8,10 +8,15 @@ Date: 17/11/2026
 */
 
 #include "departmentList.h"
+#include "employeeList.h"
 
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace {
 
@@ -22,6 +27,36 @@ std::string trim(const std::string& value) {
     if (start == std::string::npos) return "";
     size_t end = value.find_last_not_of(whitespace);
     return value.substr(start, end - start + 1);
+}
+
+/*
+Ho va ten: Hoang Duc Tuyen
+Date: 28/11/2026
+Mo ta: Tách bản ghi theo ký tự phân cách và loại bỏ khoảng trắng ở hai đầu mỗi trường.
+*/
+std::vector<std::string> split(const std::string& line, char delimiter) {
+    std::vector<std::string> fields;
+    std::stringstream input(line);
+    std::string field;
+    while (std::getline(input, field, delimiter)) fields.push_back(trim(field));
+    return fields;
+}
+
+/*
+Ho va ten: Hoang Duc Tuyen
+Date: 28/11/2026
+Mo ta: Yêu cầu người dùng xác nhận hoặc hủy thao tác.
+*/
+bool confirm(const std::string& message) {
+    std::string answer;
+    do {
+        std::cout << message << " (y/n): ";
+        std::getline(std::cin, answer);
+        answer = trim(answer);
+        if (answer == "y" || answer == "Y") return true;
+        if (answer == "n" || answer == "N") return false;
+        std::cout << "Enter y or n.\n";
+    } while (true);
 }
 
 /*
@@ -113,8 +148,41 @@ void DepartmentList::updateDepartment(EmployeeList& employeeList) {
     std::cout << "Department updated.\n";
 }
 
+/*
+Ho va ten: Hoang Duc Tuyen
+Date: 28/11/2026
+Mo ta: Hiển thị danh sách và cho phép người dùng chọn phòng ban theo mã hợp lệ.
+*/
 Department DepartmentList::getUserChoice() {
+    if (itemArr.empty()) return Department();
+    listDepartments();
+    do {
+        std::string id = readRequired("Enter department ID: ");
+        int index = searchID(id);
+        if (index >= 0) return itemArr[index];
+        std::cout << "Department ID does not exist.\n";
+    } while (confirm("Try another department ID?"));
     return Department();
+}
+
+/*
+Ho va ten: Hoang Duc Tuyen
+Date: 28/11/2026
+Mo ta: Xác nhận và xóa phòng ban được chọn khỏi danh sách.
+*/
+bool DepartmentList::removeDepartment() {
+    std::string id = readRequired("Enter the department ID to remove: ");
+    int index = searchID(id);
+    if (index < 0) {
+        std::cout << "Department not found.\n";
+        return false;
+    }
+
+    if (!confirm("Confirm final deletion of department " + id + "?")) return false;
+    itemArr.erase(itemArr.begin() + index);
+    hasChangeNotUpdated = true;
+    std::cout << "Department removed.\n";
+    return true;
 }
 
 /*
