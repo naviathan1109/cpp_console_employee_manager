@@ -1,0 +1,5 @@
+EMP001|Nguyen Van An|Staff|DP001|15000.00
+EMP002|Tran Thi Binh|Department Manager|DP001|25000.00
+EMP003|Le Van Cuong|Accountant|DP002|18000.00
+EMP004|Pham Thi Dung|Software Developer|DP003|22000.00
+EMP005|Hoang Minh Duc|Systems Administrator|DP003|28000.00

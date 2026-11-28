@@ -9,6 +9,7 @@ Date: 17/11/2026
 
 #include "departmentList.h"
 #include "employeeList.h"
+#include "department.h"
 
 #include <fstream>
 #include <iomanip>
@@ -94,18 +95,18 @@ double readPositiveDouble(const std::string& label) {
     } while (true);
 }
 
+void printDepartmentHeader() {
+    std::cout << std::left
+              << std::setw(8) << "Dept ID" << " | "
+              << std::setw(30) << "Name" << " | "
+              << std::setw(15) << "Location" << " | "
+              << std::right << std::setw(15) << "Budget" << '\n';
+}
+
 } 
 
 // namespace
 DepartmentList::DepartmentList() = default;
-
-bool DepartmentList::loadFromFile(const std::string&) {
-    return false;
-}
-
-bool DepartmentList::saveToFile(const std::string&) {
-    return false;
-}
 
 /*
    author: K26DTCN078_nvan
@@ -118,6 +119,16 @@ int DepartmentList::searchID(const std::string& id) {
     return -1;
 }
 
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Tra ve phong ban tai vi tri duoc yeu cau hoac gia tri rong neu vi tri khong hop le
+*/
+Department DepartmentList::getDepartment(int index) const {
+    if (index < 0 || index >= static_cast<int>(itemArr.size()))
+        return Department();
+    return itemArr[index];
+}
 
 /*
    author: K26DTCN078_nvan
@@ -170,15 +181,58 @@ Ho va ten: Hoang Duc Tuyen
 Date: 28/11/2026
 Mo ta: Xác nhận và xóa phòng ban được chọn khỏi danh sách.
 */
-bool DepartmentList::removeDepartment() {
-    std::string id = readRequired("Enter the department ID to remove: ");
+bool DepartmentList::removeDepartment(EmployeeList& employeeList) {
+    const std::string id = readRequired("Enter the department ID to remove: ");
+    return removeDepartment(id, employeeList);
+}
+
+/*
+   author: anhnh
+   date: 28/11/2026
+   description: Kiem tra nhan vien thuoc phong ban, xu ly chuyen hoac xoa nhan vien roi xoa phong ban
+*/
+bool DepartmentList::removeDepartment(const std::string& id,
+                                      EmployeeList& employeeList) {
     int index = searchID(id);
     if (index < 0) {
         std::cout << "Department not found.\n";
         return false;
     }
 
-    if (!confirm("Confirm final deletion of department " + id + "?")) return false;
+    const std::size_t employeeCount = employeeList.countByDepartment(id);
+    if (employeeCount > 0) {
+        std::cout << "This department has " << employeeCount << " employee(s).\n"
+                  << "1. Move all employees to another department\n"
+                  << "2. Delete all employees in this department\n"
+                  << "0. Cancel\n";
+
+        int choice = -1;
+        std::string input;
+        while (true) {
+            std::cout << "Enter your choice: ";
+            if (!std::getline(std::cin, input)) return false;
+            std::stringstream parser(input);
+            if (parser >> choice && parser.eof() && choice >= 0 && choice <= 2)
+                break;
+            std::cout << "Invalid choice.\n";
+        }
+
+        if (choice == 0) return false;
+        if (choice == 1) {
+            const Department target = getUserChoice();
+            if (target.getDepartmentID().empty() ||
+                target.getDepartmentID() == id) {
+                std::cout << "A different target department is required.\n";
+                return false;
+            }
+            employeeList.moveDepartment(id, target);
+        } else {
+            employeeList.removeByDepartment(id);
+        }
+    }
+
+    if (!confirm("Confirm final deletion of department " + id + "?"))
+        return false;
     itemArr.erase(itemArr.begin() + index);
     hasChangeNotUpdated = true;
     std::cout << "Department removed.\n";
@@ -221,7 +275,7 @@ void DepartmentList::listDepartments() const {
         return;
     }
 
-    // Duyet va in thong tin tung phong ban
+    printDepartmentHeader();
     for (const Department& department : itemArr)
         std::cout << department.toString() << '\n';
 }
