@@ -1,35 +1,52 @@
+#include "employeeManager.h"
+
 #include "departmentList.h"
 #include "employeeList.h"
 #include "menu.h"
 
-#include <exception>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
-/*
-   author: anhnh
-   date: 19/11/2026
-   description: Khoi tao danh sach chuc nang va chay vong lap xu ly lua chon
-*/
-int main() {
-    const std::vector<std::string> options = {
-        "Exit",
-        "List all departments",
-        "Add a department",
-        "Search department by ID",
-        "Update a department",
-        "Remove a department",
-        "Save departments to department.txt",
-        "List all employees",
-        "Search employees by department name",
-        "Add an employee",
-        "Update an employee",
-        "Remove an employee",
-        "Save employees to employee.txt"
-    };
+namespace {
+// Removes leading and trailing whitespace from user input.
+std::string trim(const std::string& value) {
+    const std::string whitespace = " \t\r\n";
+    size_t start = value.find_first_not_of(whitespace);
+    if (start == std::string::npos) return "";
+    size_t end = value.find_last_not_of(whitespace);
+    return value.substr(start, end - start + 1);
+}
 
-    // Khoi tao doi tuong quan ly danh sach phong ban va danh sach nhan vien (author: anhnq)
+// Reads a yes/no response and repeats until it is valid.
+bool confirm(const std::string& message) {
+    std::string answer;
+    do {
+        std::cout << message << " (y/n): ";
+        std::getline(std::cin, answer);
+        answer = trim(answer);
+        if (answer == "y" || answer == "Y") return true;
+        if (answer == "n" || answer == "N") return false;
+        std::cout << "Enter y or n.\n";
+    } while (true);
+}
+
+// Reads a non-empty line, trimming surrounding whitespace.
+std::string readRequired(const std::string& label) {
+    std::string value;
+    do {
+        std::cout << label;
+        std::getline(std::cin, value);
+        value = trim(value);
+        if (value.empty()) std::cout << "This field cannot be empty.\n";
+    } while (value.empty());
+    return value;
+}
+}
+
+// Loads persisted data, dispatches menu actions, and prompts before exiting.
+void EmployeeManager::run() {
     DepartmentList departmentList;
     EmployeeList employeeList(departmentList);
 
@@ -40,83 +57,84 @@ int main() {
     }
 
     try {
-        while (true) {
-            const int selectedIndex = getMenuChoice(options);
-            // std::cout << "Selected option index: " << selectedIndex << '\n';
-
-            switch (selectedIndex) {
-                case 0:
-                    // Option 0: confirm whether to exit the program.
-                    if (confirmExit()) return 0;
-                    break;
-
-                case 1:
-                    // Option 1: hien thi toan bo danh sach phong ban (author: anhnq)
-                    departmentList.listDepartments();
-                    break;
-
-                case 2:
-                    // Option 2: them moi mot phong ban (author: anhnq)
-                    departmentList.addDepartment();
-                    break;
-
-                case 3: {
-                    // Option 3: search department by ID (author: K26DTCN078_nvan)
-                    std::string id = readRequired("Enter department ID: ");
-                    int index = departmentList.searchID(id);
-                    if (index >= 0)
-                        std::cout << departmentList.getDepartment(index).toString() << '\n';
-                    else
-                        std::cout << "Department not found.\n";
-                    break;
-                }
-
-                case 4: 
-					// Option 4: update a department (author: K26DTCN078_nvan)
-                    departmentList.updateDepartment(employeeList); 
-                    break;
-
-                case 5:
-                    // Option 5: remove a department.
-                    break;
-
-                case 6:
-                    // Option 6: save departments to department.txt.
-                    departmentList.saveToFile("department.txt");
-                    break;
-
-                case 7:
-                    // Option 7: liệt kê tất cả nhân viên. (author: K26DTCN078_nvan)
-                    employeeList.listEmployees();
-                    break;
-
-                case 8:
-                    // Option 8: tìm kiếm nhân viên theo tên bộ phận. (author: K26DTCN078_nvan)
-                    employeeList.printBasedDepartmentName();
-                    break;
-
-                case 9:
-                    // Option 9: them moi mot nhan vien (author: anhnq)
-                    employeeList.addEmployee();
-                    break;
-
-                case 10:
-                    // Option 10: cap nhat thong tin nhan vien theo ID (author: anhnq)
-                    employeeList.updateEmployee();
-                    break;
-
-                case 11:
-                    // Option 11: remove an employee.
-                    employeeList.removeEmployee();
-                    break;
-
-                case 12:
-                    // Option 12: save employees to employee.txt.
-                    break;
-            }
-        }
+        employeeList.loadFromFile("employee.txt");
     } catch (const std::exception& error) {
-        std::cerr << "Application stopped: " << error.what() << '\n';
-        return 1;
+        std::cout << "Error loading employee.txt: " << error.what() << '\n';
     }
+
+    const std::vector<std::string> options = {
+        "Exit",
+        "List all Department",
+        "Add a new Department",
+        "Search Department by ID",
+        "Update Department",
+        "Remove Department",
+        "Save Department to department.txt",
+        "List all Employee",
+        "Search employees by department name",
+        "Add a new Employee",
+        "Update Employee",
+        "Remove Employee",
+        "Save Employee to employee.txt"
+    };
+
+    Menu menu;
+    while (true) {
+        int choice = menu.int_getChoice(options);
+        if (choice == 0) {
+            if (departmentList.hasUnsavedChanges() || employeeList.hasUnsavedChanges()) {
+                if (confirm("There are unsaved changes. Save before exiting?")) {
+                    if (departmentList.hasUnsavedChanges())
+                        departmentList.saveToFile("department.txt");
+                    if (employeeList.hasUnsavedChanges())
+                        employeeList.saveToFile("employee.txt");
+                }
+            }
+            if (!confirm("Confirm exit?")) continue;
+            break;
+        }
+
+        switch (choice) {
+            case 1: departmentList.listDepartments(); break;
+            case 2: departmentList.addDepartment(); break;
+            case 3: {
+                std::string id = readRequired("Enter department ID: ");
+                int index = departmentList.searchID(id);
+                if (index >= 0)
+                    std::cout << departmentList.getDepartment(index).toString() << '\n';
+                else
+                    std::cout << "Department not found.\n";
+                break;
+            }
+            case 4: departmentList.updateDepartment(employeeList); break;
+            case 5: {
+                std::string id = readRequired("Enter the department ID to remove: ");
+                departmentList.removeDepartment(id, employeeList);
+                break;
+            }
+            case 6:
+                std::cout << (departmentList.saveToFile("department.txt")
+                                  ? "Saved department.txt.\n"
+                                  : "Could not save department.txt.\n");
+                break;
+            case 7: employeeList.listEmployees(); break;
+            case 8: employeeList.printBasedDepartmentName(); break;
+            case 9: employeeList.addEmployee(); break;
+            case 10: employeeList.updateEmployee(); break;
+            case 11: employeeList.removeEmployee(); break;
+            case 12:
+                std::cout << (employeeList.saveToFile("employee.txt")
+                                  ? "Saved employee.txt.\n"
+                                  : "Could not save employee.txt.\n");
+                break;
+            default: std::cout << "Invalid choice.\n";
+        }
+    }
+}
+
+// Creates the manager and starts the console application.
+int main() {
+    EmployeeManager manager;
+    manager.run();
+    return 0;
 }
